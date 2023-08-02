@@ -3,12 +3,12 @@
 A simple Python script to convert from [Mission-Time Linear Temporal Logic](https://link.springer.com/chapter/10.1007/978-3-030-25543-5_1) (MLTL) to [Linear Temporal Logic on Finite Traces](https://dl.acm.org/doi/10.5555/2540128.2540252) (LTLf), based on the Lark parser.
 For the LTLf part, it follows the grammar specified by [Marco Favorito](https://github.com/marcofavorito/tl-grammars/blob/main/content/04.ltlf.md).
 For MLTL formulae, additionally bounded operators are allowed:
-- `F U_[a,b] G`
-- `G_[a,b] F`
-- `F_[a,b] F`
-- `F U_<=a G`
-- `G_<=a F`
-- `F_<=a F`
+- `a U_[a,b] b`
+- `G_[a,b] a`
+- `F_[a,b] a`
+- `a U_<=a b`
+- `G_<=a a`
+- `F_<=a a`
 
 ## Installation
 
