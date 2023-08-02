@@ -12,7 +12,7 @@ For MLTL formulae, additionally bounded operators are allowed:
 
 ## Installation
 
-After cloning this repository, install it via calling `pip install .` from this directy.
+After cloning this repository, install it via calling `pip install .` from this directory.
 
 ## Usage
 
