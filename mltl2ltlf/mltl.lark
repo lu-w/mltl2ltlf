@@ -1,0 +1,55 @@
+prop_booleans  : "TRUE" | "FALSE"
+logic_booleans : "TT" | "FF"
+
+atom : CNAME
+
+not   : "!" | "~"
+and   : "&" | "&&"
+or    : "|" | "||"
+impl  : "->" | "=>"
+equiv : "<->" | "<=>"
+xor   : "^"
+
+left_paren  : "("
+right_paren : ")"
+
+time_point : INT
+interval  : full_interval | upper_including_bound_interval | upper_excluding_bound_interval
+full_interval : "[" time_point "," time_point "]"
+upper_including_bound_interval : "<=" time_point
+upper_excluding_bound_interval : "<" time_point
+
+interval_identifier : "_"
+
+weak_next      : "X"
+next           : "X[!]"
+until          : "U" [interval_identifier interval]
+eventually     : "F" [interval_identifier interval]
+always         : "G" [interval_identifier interval]
+
+last : "last"
+end  : "end"
+
+ltl_formula : atom
+                | prop_booleans
+                | logic_booleans
+                | last
+                | end
+                | left_paren ltl_formula right_paren
+                | not ltl_formula
+                | ltl_formula and ltl_formula     -> conjunction_formula
+                | ltl_formula or ltl_formula      -> disjunction_formula
+                | ltl_formula impl ltl_formula
+                | ltl_formula equiv ltl_formula
+                | ltl_formula xor ltl_formula
+                | ltl_formula until ltl_formula   -> until_formula
+                | eventually ltl_formula          -> eventually_formula
+                | always ltl_formula              -> always_formula
+                | weak_next ltl_formula           -> weak_next_formula
+                | next ltl_formula                -> next_formula
+
+start: ltl_formula
+
+%import common.CNAME
+%import common.INT
+%ignore " "
