@@ -39,7 +39,7 @@ class TestEventually(unittest.TestCase):
     def test_eventually_00(self):
         formula = "F_[0,0] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(a)"
+        expected = "a"
         self.assertEqual(expected, actual)
 
     def test_eventually_12(self):
@@ -98,7 +98,7 @@ class TestAlways(unittest.TestCase):
     def test_always_00(self):
         formula = "G_[0,0] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(a)"
+        expected = "a"
         self.assertEqual(expected, actual)
 
     def test_always_12(self):
@@ -157,7 +157,7 @@ class TestUntil(unittest.TestCase):
     def test_until_00(self):
         formula = "a U_[0,0] b"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(b)"
+        expected = "b"
         self.assertEqual(expected, actual)
 
     def test_until_12(self):

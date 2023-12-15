@@ -1,41 +1,58 @@
-prop_booleans  : "TRUE" | "FALSE"
-logic_booleans : "TT" | "FF"
+INTERVAL_IDENTIFIER : "_"
+X_TERMINAL          : "X"
+XB_TERMINAL         : "X[!]"
+U_TERMINAL          : "U"
+F_TERMINAL          : "F"
+G_TERMINAL          : "G"
+LAST_TERMINAL       : "last"
+END_TERMINAL        : "end"
+NOT1_TERMINAL       : "!"
+NOT2_TERMINAL       : "~"
+AND1_TERMINAL       : "&"
+AND2_TERMINAL       : "&&"
+OR1_TERMINAL        : "|"
+OR2_TERMINAL        : "||"
+IMPL1_TERMINAL      : "->"
+IMPL2_TERMINAL      : "=>"
+EQUIV1_TERMINAL     : "<->"
+EQUIV2_TERMINAL     : "<=>"
+XOR_TERMINAL        : "^"
+LEFT_PAREN          : "("
+RIGHT_PAREN         : ")"
+TRUE_TERMINAL       : "TRUE"
+FALSE_TERMINAL      : "FALSE"
+TT_TERMINAL         : "TT"
+FF_TERMINAL         : "FF"
+ATOM                : CNAME
 
-atom : CNAME
+prop_booleans  : TRUE_TERMINAL | FALSE_TERMINAL
+logic_booleans : TT_TERMINAL | FF_TERMINAL
 
-not   : "!" | "~"
-and   : "&" | "&&"
-or    : "|" | "||"
-impl  : "->" | "=>"
-equiv : "<->" | "<=>"
-xor   : "^"
-
-left_paren  : "("
-right_paren : ")"
+not   : NOT1_TERMINAL | NOT2_TERMINAL
+and   : AND1_TERMINAL | AND2_TERMINAL
+or    : OR1_TERMINAL | OR2_TERMINAL
+impl  : IMPL1_TERMINAL | IMPL2_TERMINAL
+equiv : EQUIV1_TERMINAL | EQUIV2_TERMINAL
+xor   : XOR_TERMINAL
 
 time_point : INT
-interval  : full_interval | upper_including_bound_interval | upper_excluding_bound_interval
+interval : full_interval | upper_including_bound_interval | upper_excluding_bound_interval
 full_interval : "[" time_point "," time_point "]"
 upper_including_bound_interval : "<=" time_point
 upper_excluding_bound_interval : "<" time_point
 
-interval_identifier : "_"
+weak_next      : X_TERMINAL
+next           : XB_TERMINAL
+until          : U_TERMINAL [INTERVAL_IDENTIFIER interval]
+eventually     : F_TERMINAL [INTERVAL_IDENTIFIER interval]
+always         : G_TERMINAL [INTERVAL_IDENTIFIER interval]
 
-weak_next      : "X"
-next           : "X[!]"
-until          : "U" [interval_identifier interval]
-eventually     : "F" [interval_identifier interval]
-always         : "G" [interval_identifier interval]
-
-last : "last"
-end  : "end"
-
-ltl_formula : atom
+ltl_formula : ATOM
                 | prop_booleans
                 | logic_booleans
-                | last
-                | end
-                | left_paren ltl_formula right_paren
+                | LAST_TERMINAL
+                | END_TERMINAL
+                | LEFT_PAREN ltl_formula RIGHT_PAREN
                 | not ltl_formula
                 | ltl_formula and ltl_formula     -> conjunction_formula
                 | ltl_formula or ltl_formula      -> disjunction_formula

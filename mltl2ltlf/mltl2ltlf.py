@@ -30,12 +30,13 @@ class IntervalTransformer(lark.Transformer):
         return a, b
 
     def _bracket_formula(self, formula: lark.Tree):
-        lp = lark.Tree(data=lark.Token("RULE", "left_paren"), children=[])
-        rp = lark.Tree(data=lark.Token("RULE", "right_paren"), children=[])
+        lp = lark.Token("LEFT_PAREN", "(")
+        rp = lark.Token("RIGHT_PAREN", ")")
         return lark.Tree(data=lark.Token("RULE", "ltl_formula"), children=[lp, formula, rp])
 
     def _disjunction(self, a, b, c=None, bracket=True):
-        b_disjunction_ = lark.Tree(data=lark.Token("RULE", "or"), children=[])
+        b_disjunction_term = lark.Token("OR1_TERMINAL", "|")
+        b_disjunction_ = lark.Tree(data=lark.Token("RULE", "or"), children=[b_disjunction_term])
         formula = lark.Tree(data=lark.Token("RULE", "disjunction_formula"), children=[a, b_disjunction_, b])
         if bracket:
             return self._bracket_formula(formula)
@@ -43,7 +44,8 @@ class IntervalTransformer(lark.Transformer):
             return formula
 
     def _conjunction(self, a, b, c=None, bracket=True):
-        b_conjunction_ = lark.Tree(data=lark.Token("RULE", "and"), children=[])
+        b_conjunction_term = lark.Token("AND1_TERMINAL", "&")
+        b_conjunction_ = lark.Tree(data=lark.Token("RULE", "and"), children=[b_conjunction_term])
         formula = lark.Tree(data=lark.Token("RULE", "conjunction_formula"), children=[a, b_conjunction_, b])
         if bracket:
             return self._bracket_formula(formula)
@@ -55,7 +57,8 @@ class IntervalTransformer(lark.Transformer):
         return self._disjunction(b, con, bracket=bracket)
 
     def _weak_next(self, a=None, bracket=True):
-        b_next_ = lark.Tree(data=lark.Token("RULE", "next"), children=[])
+        b_next_term = lark.Token("XB_TERMINAL", "X[!]")
+        b_next_ = lark.Tree(data=lark.Token("RULE", "next"), children=[b_next_term])
         if a is not None:
             c = [b_next_, a]
         else:
@@ -103,8 +106,9 @@ class IntervalTransformer(lark.Transformer):
                 res = a_prev_next_f
             else:
                 res = inner_part_f
-            if len(res.children) > 0 and res.children[0].data == "ltl_formula" and len(res.children[0].children) > 0 \
-                    and res.children[0].children[0].data == "left_paren":
+            if (len(res.children) > 0 and (not hasattr(res.children[0], "data") or
+                                           (res.children[0].data == "ltl_formula" and len(res.children[0].children) > 0
+                                            and res.children[0].children[0] == lark.Token("LEFT_PAREN", "(")))):
                 return res
             else:
                 return self._bracket_formula(res)
@@ -122,10 +126,16 @@ class IntervalTransformer(lark.Transformer):
         return self._construct_interval(s, operator_name="until_formula", operator_fun=self._until_subformula)
 
 
+def to_string(ltlf_formula: lark.Tree):
+    return ""
+
+
 def mltl2ltlf(ltl_in: str):
     mltl_formula = _MTL_PARSER.parse(ltl_in)
     ltlf_formula = IntervalTransformer().transform(mltl_formula)
+    ltlf_string = to_string(ltlf_formula)
     return Reconstructor(_MTL_PARSER).reconstruct(ltlf_formula)
+
 
 def main():
     if len(sys.argv) > 1:
@@ -136,6 +146,7 @@ def main():
         exit(1)
     else:
         exit(1)
+
 
 if __name__ == "__main__":
     main()
