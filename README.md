@@ -28,9 +28,4 @@ and computes the LTLf formula for the given MLTL formula:
 ## Tests
 
 You can execute the tests by `python -m unittest test.test_mltl2ltlf`.
-The unittests in `test/test_mltl2ltlf.py` also contains some example formulae.
-
-## Limitations
-
-Currently, large bounds lead to degradation in performance.
-This is due to Lark's reconstruct method, which performs quite inefficiently.
+The unittests in `test/test_mltl2ltlf.py` also contain some example formulae.

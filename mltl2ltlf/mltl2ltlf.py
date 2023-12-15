@@ -4,7 +4,6 @@ import sys
 from typing import Callable
 
 import lark
-from lark.reconstruct import Reconstructor
 import os
 
 _MTL_LARK_FILE = os.path.join(os.path.dirname((os.path.realpath(__file__))), "mltl.lark")
@@ -127,14 +126,23 @@ class IntervalTransformer(lark.Transformer):
 
 
 def to_string(ltlf_formula: lark.Tree):
-    return ""
+    res_string = ""
+    formulas = [ltlf_formula]
+    while len(formulas) > 0:
+        cur_formula = formulas[0]
+        formulas = formulas[1:]
+        if isinstance(cur_formula, lark.Tree) and len(cur_formula.children) > 0:
+            formulas = cur_formula.children + formulas
+        elif isinstance(cur_formula, lark.Token):
+            res_string += cur_formula.value
+    return res_string
 
 
 def mltl2ltlf(ltl_in: str):
     mltl_formula = _MTL_PARSER.parse(ltl_in)
     ltlf_formula = IntervalTransformer().transform(mltl_formula)
     ltlf_string = to_string(ltlf_formula)
-    return Reconstructor(_MTL_PARSER).reconstruct(ltlf_formula)
+    return ltlf_string
 
 
 def main():

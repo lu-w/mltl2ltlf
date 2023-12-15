@@ -49,7 +49,7 @@ class TestEventually(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_eventually_no_interval(self):
-        formula = "F a"
+        formula = "Fa"
         actual = mltl2ltlf.mltl2ltlf(formula)
         self.assertEqual(formula, actual)
 
@@ -108,7 +108,7 @@ class TestAlways(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_always_no_interval(self):
-        formula = "G a"
+        formula = "Ga"
         actual = mltl2ltlf.mltl2ltlf(formula)
         self.assertEqual(formula, actual)
 
@@ -167,7 +167,7 @@ class TestUntil(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_until_no_interval(self):
-        formula = "a U b"
+        formula = "aUb"
         actual = mltl2ltlf.mltl2ltlf(formula)
         self.assertEqual(formula, actual)
 
@@ -187,7 +187,7 @@ class TestMixingOperators(unittest.TestCase):
     def test_nested_operator(self):
         formula = "F G_[1,2] (a U (F b))"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "F(X[!]((a U(F b))&(X[!](a U(F b)))))"
+        expected = "F(X[!]((aU(Fb))&(X[!](aU(Fb)))))"
         self.assertEqual(expected, actual)
 
     def test_simple_mixing_1(self):
@@ -205,5 +205,5 @@ class TestMixingOperators(unittest.TestCase):
     def test_complex_mixing(self):
         formula = "(F_[0,1] G_[1,2] a) U b"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "((X[!](a&(X[!]a)))|(X[!](X[!](a&(X[!]a)))))U b"
+        expected = "((X[!](a&(X[!]a)))|(X[!](X[!](a&(X[!]a)))))Ub"
         self.assertEqual(expected, actual)
