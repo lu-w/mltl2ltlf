@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="mltl2ltlf",
-    version="0.1",
+    version="0.2",
     packages=["mltl2ltlf"],
     package_data={"mltl2ltlf": ["mltl.lark"]},
     install_requires=[
