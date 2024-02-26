@@ -68,31 +68,31 @@ class TestAlways(unittest.TestCase):
     def test_always_48(self):
         formula = "G_[4,8] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(X[!](X[!](X[!](X[!](a&(X[!](a&(X[!](a&(X[!](a&(X[!]a))))))))))))"
+        expected = "(X(X(X(X(a&(X(a&(X(a&(X(a&(Xa))))))))))))"
         self.assertEqual(expected, actual)
 
     def test_always_03(self):
         formula = "G_[0,3] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(a&(X[!](a&(X[!](a&(X[!]a))))))"
+        expected = "(a&(X(a&(X(a&(Xa))))))"
         self.assertEqual(expected, actual)
 
     def test_always_3(self):
         formula = "G_<=3 a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(a&(X[!](a&(X[!](a&(X[!]a))))))"
+        expected = "(a&(X(a&(X(a&(Xa))))))"
         self.assertEqual(expected, actual)
 
     def test_always_2(self):
         formula = "G_<3 a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(a&(X[!](a&(X[!]a))))"
+        expected = "(a&(X(a&(Xa))))"
         self.assertEqual(expected, actual)
 
     def test_always_33(self):
         formula = "G_[3,3] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(X[!](X[!](X[!]a)))"
+        expected = "(X(X(Xa)))"
         self.assertEqual(expected, actual)
 
     def test_always_00(self):
@@ -104,7 +104,7 @@ class TestAlways(unittest.TestCase):
     def test_always_12(self):
         formula = "G_[1,2] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(X[!](a&(X[!]a)))"
+        expected = "(X(a&(Xa)))"
         self.assertEqual(expected, actual)
 
     def test_always_no_interval(self):
@@ -187,23 +187,23 @@ class TestMixingOperators(unittest.TestCase):
     def test_nested_operator(self):
         formula = "F G_[1,2] (a U (F b))"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "F(X[!]((aU(Fb))&(X[!](aU(Fb)))))"
+        expected = "F(X((aU(Fb))&(X(aU(Fb)))))"
         self.assertEqual(expected, actual)
 
     def test_simple_mixing_1(self):
         formula = "F G_[0,3] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "F(a&(X[!](a&(X[!](a&(X[!]a))))))"
+        expected = "F(a&(X(a&(X(a&(Xa))))))"
         self.assertEqual(expected, actual)
 
     def test_simple_mixing_2(self):
         formula = "F_[0,1] G_[1,2] a"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "(X[!](a&(X[!]a)))|(X[!](X[!](a&(X[!]a))))"
+        expected = "(X(a&(Xa)))|(X[!](X(a&(Xa))))"
         self.assertEqual(expected, actual)
 
     def test_complex_mixing(self):
         formula = "(F_[0,1] G_[1,2] a) U b"
         actual = mltl2ltlf.mltl2ltlf(formula)
-        expected = "((X[!](a&(X[!]a)))|(X[!](X[!](a&(X[!]a)))))Ub"
+        expected = "((X(a&(Xa)))|(X[!](X(a&(Xa)))))Ub"
         self.assertEqual(expected, actual)

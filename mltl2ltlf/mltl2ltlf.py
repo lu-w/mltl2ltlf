@@ -56,6 +56,19 @@ class IntervalTransformer(lark.Transformer):
         return self._disjunction(b, con, bracket=bracket)
 
     def _weak_next(self, a=None, bracket=True):
+        b_next_term = lark.Token("X_TERMINAL", "X")
+        b_next_ = lark.Tree(data=lark.Token("RULE", "weak_next"), children=[b_next_term])
+        if a is not None:
+            c = [b_next_, a]
+        else:
+            c = [b_next_]
+        tree = lark.Tree(data=lark.Token("RULE", "weak_next_formula"), children=c)
+        if bracket:
+            return self._bracket_formula(tree)
+        else:
+            return tree
+
+    def _strong_next(self, a=None, bracket=True):
         b_next_term = lark.Token("XB_TERMINAL", "X[!]")
         b_next_ = lark.Tree(data=lark.Token("RULE", "next"), children=[b_next_term])
         if a is not None:
@@ -69,10 +82,13 @@ class IntervalTransformer(lark.Transformer):
             return tree
 
     def _construct_interval(self, s, operator_name: str, operator_fun: Callable):
+        next_constructor = self._strong_next
         if operator_name in {"eventually_formula", "always_formula"}:
             operator = s[0]
             phi1 = inner = s[1]
             phi2 = None
+            if operator_name == "always_formula":
+                next_constructor = self._weak_next
         elif operator_name == "until_formula":
             operator = s[1]
             phi1 = s[0]
@@ -84,19 +100,19 @@ class IntervalTransformer(lark.Transformer):
             a, b = self._get_interval_bounds(interval[0])
 
             if b > a:
-                b_next_f = self._weak_next(inner)
+                b_next_f = next_constructor(inner)
                 for i in range(b - a - 1):
                     b_operator_f = operator_fun(phi1, b_next_f, phi2)
-                    b_next_f = self._weak_next(b_operator_f)
+                    b_next_f = next_constructor(b_operator_f)
                 inner_part_f = operator_fun(phi1, b_next_f, phi2, bracket=(a > 0))
             else:
                 inner_part_f = inner
 
             if a > 0:
-                a_inner_next_f = self._weak_next(bracket=a > 1)
+                a_inner_next_f = next_constructor(bracket=a > 1)
                 a_prev_next_f = a_inner_next_f
                 for i in range(a - 1):
-                    a_next_f = self._weak_next(a_prev_next_f, bracket=(i < a - 2))
+                    a_next_f = next_constructor(a_prev_next_f, bracket=(i < a - 2))
                     a_prev_next_f = a_next_f
                 if a > 1:
                     a_inner_next_f.children[1].children.append(inner_part_f)
